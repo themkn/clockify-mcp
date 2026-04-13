@@ -1,5 +1,11 @@
 import { ClockifyError } from "./errors.js";
-import type { ClockifyUser } from "./types.js";
+import type {
+  ClockifyUser,
+  CreateTimeEntryBody,
+  ListTimeEntriesQuery,
+  RawTimeEntry,
+  UpdateTimeEntryBody,
+} from "./types.js";
 
 const BASE_URL = "https://api.clockify.me/api/v1";
 
@@ -16,6 +22,74 @@ export class ClockifyClient {
 
   async getCurrentUser(): Promise<ClockifyUser> {
     return this.request<ClockifyUser>("/user");
+  }
+
+  async listTimeEntries(
+    workspaceId: string,
+    userId: string,
+    q: ListTimeEntriesQuery = {},
+  ): Promise<RawTimeEntry[]> {
+    return this.request<RawTimeEntry[]>(
+      `/workspaces/${encode(workspaceId)}/user/${encode(userId)}/time-entries`,
+      {
+        query: {
+          start: q.start,
+          end: q.end,
+          project: q.project,
+          description: q.description,
+          "in-progress": q.inProgress,
+          page: q.page,
+          "page-size": q.pageSize,
+          hydrated: true,
+        },
+      },
+    );
+  }
+
+  async getTimeEntry(workspaceId: string, id: string): Promise<RawTimeEntry> {
+    return this.request<RawTimeEntry>(
+      `/workspaces/${encode(workspaceId)}/time-entries/${encode(id)}`,
+      { query: { hydrated: true } },
+    );
+  }
+
+  async createTimeEntry(
+    workspaceId: string,
+    body: CreateTimeEntryBody,
+  ): Promise<RawTimeEntry> {
+    return this.request<RawTimeEntry>(
+      `/workspaces/${encode(workspaceId)}/time-entries`,
+      { method: "POST", body },
+    );
+  }
+
+  async updateTimeEntry(
+    workspaceId: string,
+    id: string,
+    body: UpdateTimeEntryBody,
+  ): Promise<RawTimeEntry> {
+    return this.request<RawTimeEntry>(
+      `/workspaces/${encode(workspaceId)}/time-entries/${encode(id)}`,
+      { method: "PUT", body },
+    );
+  }
+
+  async deleteTimeEntry(workspaceId: string, id: string): Promise<void> {
+    await this.request<void>(
+      `/workspaces/${encode(workspaceId)}/time-entries/${encode(id)}`,
+      { method: "DELETE" },
+    );
+  }
+
+  async stopRunningTimer(
+    workspaceId: string,
+    userId: string,
+    end: string,
+  ): Promise<RawTimeEntry> {
+    return this.request<RawTimeEntry>(
+      `/workspaces/${encode(workspaceId)}/user/${encode(userId)}/time-entries`,
+      { method: "PATCH", body: { end } },
+    );
   }
 
   async request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
@@ -109,4 +183,11 @@ function isClockifyErrorBody(
 function sanitize(message: string, apiKey: string): string {
   if (!apiKey) return message;
   return message.split(apiKey).join("[redacted]");
+}
+
+function encode(segment: string): string {
+  if (!segment || segment.includes("/") || segment.includes("?") || segment.includes("#")) {
+    throw new Error(`Invalid path segment: ${JSON.stringify(segment)}`);
+  }
+  return encodeURIComponent(segment);
 }
