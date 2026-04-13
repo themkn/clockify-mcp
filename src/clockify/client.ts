@@ -1,9 +1,13 @@
 import { ClockifyError } from "./errors.js";
 import type {
   ClockifyUser,
+  CreateProjectBody,
   CreateTimeEntryBody,
+  ListProjectsQuery,
   ListTimeEntriesQuery,
+  RawProject,
   RawTimeEntry,
+  UpdateProjectBody,
   UpdateTimeEntryBody,
 } from "./types.js";
 
@@ -78,6 +82,65 @@ export class ClockifyClient {
     await this.request<void>(
       `/workspaces/${encode(workspaceId)}/time-entries/${encode(id)}`,
       { method: "DELETE" },
+    );
+  }
+
+  async listProjects(
+    workspaceId: string,
+    q: ListProjectsQuery = {},
+  ): Promise<RawProject[]> {
+    return this.request<RawProject[]>(
+      `/workspaces/${encode(workspaceId)}/projects`,
+      {
+        query: {
+          name: q.name,
+          clients: q.clientIds?.join(","),
+          archived: q.archived,
+          page: q.page,
+          "page-size": q.pageSize,
+        },
+      },
+    );
+  }
+
+  async getProject(workspaceId: string, id: string): Promise<RawProject> {
+    return this.request<RawProject>(
+      `/workspaces/${encode(workspaceId)}/projects/${encode(id)}`,
+    );
+  }
+
+  async createProject(
+    workspaceId: string,
+    body: CreateProjectBody,
+  ): Promise<RawProject> {
+    return this.request<RawProject>(
+      `/workspaces/${encode(workspaceId)}/projects`,
+      { method: "POST", body },
+    );
+  }
+
+  async updateProject(
+    workspaceId: string,
+    id: string,
+    body: UpdateProjectBody,
+  ): Promise<RawProject> {
+    return this.request<RawProject>(
+      `/workspaces/${encode(workspaceId)}/projects/${encode(id)}`,
+      { method: "PUT", body },
+    );
+  }
+
+  async deleteProject(workspaceId: string, id: string): Promise<void> {
+    await this.request<void>(
+      `/workspaces/${encode(workspaceId)}/projects/${encode(id)}`,
+      { method: "DELETE" },
+    );
+  }
+
+  async archiveProject(workspaceId: string, id: string): Promise<RawProject> {
+    return this.request<RawProject>(
+      `/workspaces/${encode(workspaceId)}/projects/${encode(id)}`,
+      { method: "PATCH", body: { archived: true } },
     );
   }
 

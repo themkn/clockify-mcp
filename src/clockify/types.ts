@@ -38,3 +38,33 @@ export interface ListTimeEntriesQuery {
   page?: number;
   pageSize?: number;
 }
+
+export interface RawProject {
+  id: string;
+  name: string;
+  clientId?: string | null;
+  clientName?: string | null;
+  archived?: boolean;
+  billable?: boolean;
+  color?: string | null;
+  note?: string | null;
+}
+
+export interface CreateProjectBody {
+  name: string;
+  clientId?: string;
+  color?: string;
+  billable?: boolean;
+  isPublic?: boolean;
+  note?: string;
+}
+
+export type UpdateProjectBody = Partial<CreateProjectBody>;
+
+export interface ListProjectsQuery {
+  name?: string;
+  clientIds?: string[];
+  archived?: boolean;
+  page?: number;
+  pageSize?: number;
+}
