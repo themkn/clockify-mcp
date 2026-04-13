@@ -7,8 +7,10 @@ start/stop timer), projects, tasks, tags, and clients.
 ## Install
 
 ```sh
-npm install -g clockify-mcp
+npm install -g @themkn/clockify-mcp
 ```
+
+The binary is called `clockify-mcp` regardless of the scoped package name.
 
 (Or point Claude's MCP config at the built JS locally — see below.)
 

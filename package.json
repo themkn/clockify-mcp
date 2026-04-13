@@ -1,5 +1,5 @@
 {
-  "name": "clockify-mcp",
+  "name": "@themkn/clockify-mcp",
   "version": "0.1.0",
   "description": "MCP server for managing Clockify time entries, projects, tasks, tags, and clients.",
   "license": "MIT",
