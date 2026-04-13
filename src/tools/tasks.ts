@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ToolContext, ToolDefinition } from "../server.js";
 import { shapeTask } from "./shape.js";
+import { zPositiveInt } from "./coerce.js";
 import type { CreateTaskBody, RawTask, UpdateTaskBody } from "../clockify/types.js";
 
 const idString = z.string().min(1).refine((s) => !s.includes("/"), "must not contain '/'");
@@ -9,8 +10,8 @@ const ListInput = z
   .object({
     projectId: idString,
     name: z.string().min(1).optional(),
-    page: z.number().int().positive().optional(),
-    pageSize: z.number().int().positive().max(200).optional(),
+    page: zPositiveInt().optional(),
+    pageSize: zPositiveInt(200).optional(),
   })
   .strict();
 

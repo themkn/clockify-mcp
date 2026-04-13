@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { ToolContext, ToolDefinition } from "../server.js";
 import { ClockifyError } from "../clockify/errors.js";
 import { shapeProject } from "./shape.js";
+import { zBoolean, zPositiveInt } from "./coerce.js";
 import type { CreateProjectBody, RawProject, UpdateProjectBody } from "../clockify/types.js";
 
 const idString = z.string().min(1).refine((s) => !s.includes("/"), "must not contain '/'");
@@ -10,9 +11,9 @@ const ListInput = z
   .object({
     name: z.string().min(1).optional(),
     clientId: idString.optional(),
-    archived: z.boolean().optional(),
-    page: z.number().int().positive().optional(),
-    pageSize: z.number().int().positive().max(200).optional(),
+    archived: zBoolean().optional(),
+    page: zPositiveInt().optional(),
+    pageSize: zPositiveInt(200).optional(),
   })
   .strict();
 
@@ -23,7 +24,7 @@ const CreateInput = z
     name: z.string().min(1),
     clientId: idString.optional(),
     color: z.string().min(1).optional(),
-    billable: z.boolean().optional(),
+    billable: zBoolean().optional(),
     note: z.string().optional(),
   })
   .strict();
@@ -34,7 +35,7 @@ const UpdateInput = z
     name: z.string().min(1).optional(),
     clientId: idString.optional(),
     color: z.string().min(1).optional(),
-    billable: z.boolean().optional(),
+    billable: zBoolean().optional(),
     note: z.string().optional(),
   })
   .strict();

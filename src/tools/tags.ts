@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ToolContext, ToolDefinition } from "../server.js";
 import { shapeTag } from "./shape.js";
+import { zBoolean, zPositiveInt } from "./coerce.js";
 import type { CreateTagBody, RawTag, UpdateTagBody } from "../clockify/types.js";
 
 const idString = z.string().min(1).refine((s) => !s.includes("/"), "must not contain '/'");
@@ -8,14 +9,14 @@ const idString = z.string().min(1).refine((s) => !s.includes("/"), "must not con
 const ListInput = z
   .object({
     name: z.string().min(1).optional(),
-    archived: z.boolean().optional(),
-    page: z.number().int().positive().optional(),
-    pageSize: z.number().int().positive().max(200).optional(),
+    archived: zBoolean().optional(),
+    page: zPositiveInt().optional(),
+    pageSize: zPositiveInt(200).optional(),
   })
   .strict();
 
 const CreateInput = z.object({ name: z.string().min(1) }).strict();
-const UpdateInput = z.object({ id: idString, name: z.string().min(1).optional(), archived: z.boolean().optional() }).strict();
+const UpdateInput = z.object({ id: idString, name: z.string().min(1).optional(), archived: zBoolean().optional() }).strict();
 const DeleteInput = z.object({ id: idString }).strict();
 
 type AnyClient = {

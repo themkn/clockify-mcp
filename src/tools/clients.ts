@@ -2,15 +2,16 @@ import { z } from "zod";
 import type { ToolContext, ToolDefinition } from "../server.js";
 import { shapeClient } from "./shape.js";
 import type { CreateClientBody, RawClient, UpdateClientBody } from "../clockify/types.js";
+import { zBoolean, zPositiveInt } from "./coerce.js";
 
 const idString = z.string().min(1).refine((s) => !s.includes("/"), "must not contain '/'");
 
 const ListInput = z
   .object({
     name: z.string().min(1).optional(),
-    archived: z.boolean().optional(),
-    page: z.number().int().positive().optional(),
-    pageSize: z.number().int().positive().max(200).optional(),
+    archived: zBoolean().optional(),
+    page: zPositiveInt().optional(),
+    pageSize: zPositiveInt(200).optional(),
   })
   .strict();
 
@@ -20,7 +21,7 @@ const UpdateInput = z
     id: idString,
     name: z.string().min(1).optional(),
     note: z.string().optional(),
-    archived: z.boolean().optional(),
+    archived: zBoolean().optional(),
   })
   .strict();
 const DeleteInput = z.object({ id: idString }).strict();

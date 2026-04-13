@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ToolContext, ToolDefinition } from "../server.js";
 import { shapeTimeEntry } from "./shape.js";
+import { zBoolean, zPositiveInt } from "./coerce.js";
 import type {
   CreateTimeEntryBody,
   RawTimeEntry,
@@ -16,8 +17,8 @@ const ListInput = z
     end: isoDateTime.optional(),
     projectId: idString.optional(),
     descriptionContains: z.string().min(1).optional(),
-    page: z.number().int().positive().optional(),
-    pageSize: z.number().int().positive().max(200).optional(),
+    page: zPositiveInt().optional(),
+    pageSize: zPositiveInt(200).optional(),
   })
   .strict();
 
@@ -31,7 +32,7 @@ const CreateInput = z
     projectId: idString.optional(),
     taskId: idString.optional(),
     tagIds: z.array(idString).optional(),
-    billable: z.boolean().optional(),
+    billable: zBoolean().optional(),
   })
   .strict();
 
@@ -44,7 +45,7 @@ const UpdateInput = z
     projectId: idString.optional(),
     taskId: idString.optional(),
     tagIds: z.array(idString).optional(),
-    billable: z.boolean().optional(),
+    billable: zBoolean().optional(),
   })
   .strict();
 
@@ -56,7 +57,7 @@ const StartInput = z
     projectId: idString.optional(),
     taskId: idString.optional(),
     tagIds: z.array(idString).optional(),
-    billable: z.boolean().optional(),
+    billable: zBoolean().optional(),
     start: isoDateTime.optional(),
   })
   .strict();
