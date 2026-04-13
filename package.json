@@ -1,0 +1,31 @@
+{
+  "name": "clockify-mcp",
+  "version": "0.1.0",
+  "description": "MCP server for managing Clockify time entries, projects, tasks, tags, and clients.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "clockify-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "files": ["dist", "README.md", "SECURITY.md", "LICENSE", "config.example.json"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "audit": "npm audit --audit-level=high"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}
