@@ -5,7 +5,7 @@ import {
   ListToolsRequestSchema,
   type Tool,
 } from "@modelcontextprotocol/sdk/types.js";
-import type { ZodTypeAny } from "zod";
+import { z, type ZodTypeAny } from "zod";
 import { ClockifyClient } from "./clockify/client.js";
 import { ClockifyError } from "./clockify/errors.js";
 import type { Config } from "./config.js";
@@ -45,7 +45,7 @@ export function buildServer(bootstrap: ServerBootstrap): Server {
     tools: tools.map<Tool>((t) => ({
       name: t.name,
       description: t.description,
-      inputSchema: zodToJsonSchema(t.schema),
+      inputSchema: toInputSchema(t.schema),
     })),
   }));
 
@@ -88,53 +88,12 @@ export async function runServer(bootstrap: ServerBootstrap): Promise<void> {
   await server.connect(transport);
 }
 
-/** Minimal zod → JSON Schema projection for MCP tool discovery. */
-interface InputSchema extends Record<string, unknown> {
-  type: "object";
-  properties?: Record<string, object>;
-  required?: string[];
-  additionalProperties?: boolean;
-}
-
-function zodToJsonSchema(schema: ZodTypeAny): InputSchema {
-  const def = (schema as unknown as { _def: { typeName: string; shape?: () => Record<string, ZodTypeAny> } })._def;
-  if (def.typeName === "ZodObject" && def.shape) {
-    const shape = def.shape();
-    const properties: Record<string, object> = {};
-    const required: string[] = [];
-    for (const [key, value] of Object.entries(shape)) {
-      properties[key] = zodLeafToJsonSchema(value);
-      if (!value.isOptional()) required.push(key);
-    }
-    return { type: "object", properties, required, additionalProperties: false };
-  }
-  // Fallback for schemas wrapped by .strict() or .refine() — unwrap one level.
-  const inner = (schema as unknown as { _def: { schema?: ZodTypeAny; innerType?: ZodTypeAny } })._def;
-  if (inner.schema) return zodToJsonSchema(inner.schema);
-  if (inner.innerType) return zodToJsonSchema(inner.innerType);
-  return { type: "object" };
-}
-
-function zodLeafToJsonSchema(schema: ZodTypeAny): object {
-  const name = (schema as unknown as { _def: { typeName: string } })._def.typeName;
-  switch (name) {
-    case "ZodString":
-      return { type: "string" };
-    case "ZodNumber":
-      return { type: "number" };
-    case "ZodBoolean":
-      return { type: "boolean" };
-    case "ZodArray":
-      return { type: "array", items: { type: "string" } };
-    case "ZodEnum": {
-      const values = (schema as unknown as { _def: { values: string[] } })._def.values;
-      return { type: "string", enum: values };
-    }
-    case "ZodOptional":
-    case "ZodDefault":
-    case "ZodEffects":
-      return zodLeafToJsonSchema((schema as unknown as { _def: { innerType?: ZodTypeAny; schema?: ZodTypeAny } })._def.innerType ?? (schema as unknown as { _def: { schema: ZodTypeAny } })._def.schema);
-    default:
-      return {};
-  }
+/**
+ * Project a zod schema to the JSON-Schema shape the MCP SDK expects for
+ * `Tool.inputSchema`. Delegates to zod 4's built-in `z.toJSONSchema`, then
+ * casts to the MCP SDK's narrower type (MCP requires `type: "object"` at the
+ * top level; our tool schemas always start with `z.object(...)`).
+ */
+function toInputSchema(schema: ZodTypeAny): Tool["inputSchema"] {
+  return z.toJSONSchema(schema, { target: "draft-7" }) as Tool["inputSchema"];
 }
