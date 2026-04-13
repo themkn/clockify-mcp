@@ -2,6 +2,7 @@
 import { loadConfig } from "./config.js";
 import { ClockifyClient } from "./clockify/client.js";
 import { runServer, type ToolDefinition } from "./server.js";
+import { clientTools } from "./tools/clients.js";
 import { metaTools } from "./tools/meta.js";
 import { projectTools } from "./tools/projects.js";
 import { tagTools } from "./tools/tags.js";
@@ -13,7 +14,9 @@ async function main(): Promise<void> {
   const client = new ClockifyClient(config.apiKey);
   const user = await client.getCurrentUser();
 
-  const tools: ToolDefinition<unknown>[] = [...metaTools, ...timeEntryTools, ...projectTools, ...taskTools, ...tagTools];
+  const tools: ToolDefinition<unknown>[] = [
+    ...metaTools, ...timeEntryTools, ...projectTools, ...taskTools, ...tagTools, ...clientTools,
+  ];
 
   await runServer({ config, user, client, tools });
 }

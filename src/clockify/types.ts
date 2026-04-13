@@ -95,3 +95,13 @@ export interface RawTag {
 
 export interface CreateTagBody { name: string }
 export type UpdateTagBody = Partial<{ name: string; archived: boolean }>;
+
+export interface RawClient {
+  id: string;
+  name: string;
+  archived?: boolean;
+  note?: string | null;
+}
+
+export interface CreateClientBody { name: string; note?: string }
+export type UpdateClientBody = Partial<{ name: string; note: string; archived: boolean }>;
