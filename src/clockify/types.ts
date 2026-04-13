@@ -68,3 +68,21 @@ export interface ListProjectsQuery {
   page?: number;
   pageSize?: number;
 }
+
+export interface RawTask {
+  id: string;
+  name: string;
+  projectId: string;
+  status?: string;
+  assigneeIds?: string[];
+  estimate?: string | null;
+}
+
+export interface CreateTaskBody {
+  name: string;
+  assigneeIds?: string[];
+  estimate?: string;
+  status?: "ACTIVE" | "DONE";
+}
+
+export type UpdateTaskBody = Partial<CreateTaskBody>;

@@ -4,6 +4,7 @@ import { ClockifyClient } from "./clockify/client.js";
 import { runServer, type ToolDefinition } from "./server.js";
 import { metaTools } from "./tools/meta.js";
 import { projectTools } from "./tools/projects.js";
+import { taskTools } from "./tools/tasks.js";
 import { timeEntryTools } from "./tools/timeEntries.js";
 
 async function main(): Promise<void> {
@@ -11,7 +12,7 @@ async function main(): Promise<void> {
   const client = new ClockifyClient(config.apiKey);
   const user = await client.getCurrentUser();
 
-  const tools: ToolDefinition<unknown>[] = [...metaTools, ...timeEntryTools, ...projectTools];
+  const tools: ToolDefinition<unknown>[] = [...metaTools, ...timeEntryTools, ...projectTools, ...taskTools];
 
   await runServer({ config, user, client, tools });
 }
