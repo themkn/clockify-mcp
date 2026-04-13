@@ -86,3 +86,12 @@ export interface CreateTaskBody {
 }
 
 export type UpdateTaskBody = Partial<CreateTaskBody>;
+
+export interface RawTag {
+  id: string;
+  name: string;
+  archived?: boolean;
+}
+
+export interface CreateTagBody { name: string }
+export type UpdateTagBody = Partial<{ name: string; archived: boolean }>;

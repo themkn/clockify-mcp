@@ -2,14 +2,17 @@ import { ClockifyError } from "./errors.js";
 import type {
   ClockifyUser,
   CreateProjectBody,
+  CreateTagBody,
   CreateTaskBody,
   CreateTimeEntryBody,
   ListProjectsQuery,
   ListTimeEntriesQuery,
   RawProject,
+  RawTag,
   RawTask,
   RawTimeEntry,
   UpdateProjectBody,
+  UpdateTagBody,
   UpdateTaskBody,
   UpdateTimeEntryBody,
 } from "./types.js";
@@ -184,6 +187,37 @@ export class ClockifyClient {
   async deleteTask(workspaceId: string, projectId: string, id: string): Promise<void> {
     await this.request<void>(
       `/workspaces/${encode(workspaceId)}/projects/${encode(projectId)}/tasks/${encode(id)}`,
+      { method: "DELETE" },
+    );
+  }
+
+  async listTags(
+    workspaceId: string,
+    q: { name?: string; archived?: boolean; page?: number; pageSize?: number } = {},
+  ): Promise<RawTag[]> {
+    return this.request<RawTag[]>(
+      `/workspaces/${encode(workspaceId)}/tags`,
+      { query: { name: q.name, archived: q.archived, page: q.page, "page-size": q.pageSize } },
+    );
+  }
+
+  async createTag(workspaceId: string, body: CreateTagBody): Promise<RawTag> {
+    return this.request<RawTag>(
+      `/workspaces/${encode(workspaceId)}/tags`,
+      { method: "POST", body },
+    );
+  }
+
+  async updateTag(workspaceId: string, id: string, body: UpdateTagBody): Promise<RawTag> {
+    return this.request<RawTag>(
+      `/workspaces/${encode(workspaceId)}/tags/${encode(id)}`,
+      { method: "PUT", body },
+    );
+  }
+
+  async deleteTag(workspaceId: string, id: string): Promise<void> {
+    await this.request<void>(
+      `/workspaces/${encode(workspaceId)}/tags/${encode(id)}`,
       { method: "DELETE" },
     );
   }
