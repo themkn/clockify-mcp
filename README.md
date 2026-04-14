@@ -1,8 +1,11 @@
-# clockify-mcp
+# clockify-mcp — Clockify MCP Server for Claude Code
 
-An [MCP server](https://modelcontextprotocol.io) that lets Claude manage your
-[Clockify](https://clockify.me) account: time entries (full CRUD plus
-start/stop timer), projects, tasks, tags, and clients.
+[![npm](https://img.shields.io/npm/v/@themkn/clockify-mcp)](https://www.npmjs.com/package/@themkn/clockify-mcp)
+
+An [MCP server](https://modelcontextprotocol.io) for
+[Clockify](https://clockify.me) time tracking. Start and stop timers, manage
+time entries, projects, tasks, tags, and clients — directly from
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) or any MCP-compatible client.
 
 ## Install
 
@@ -47,6 +50,22 @@ or the per-project `.claude/mcp.json`):
     "clockify": {
       "command": "clockify-mcp"
     }
+  }
+}
+```
+
+### Auto-approve tools
+
+By default Claude Code asks for permission on every Clockify tool call. To
+allow all Clockify tools without prompting, add this to your
+`~/.claude/settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__clockify__*"
+    ]
   }
 }
 ```
