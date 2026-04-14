@@ -7,6 +7,24 @@ An [MCP server](https://modelcontextprotocol.io) for
 time entries, projects, tasks, tags, and clients — directly from
 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or any MCP-compatible client.
 
+## What is Clockify?
+
+[Clockify](https://clockify.me) is a free time tracking tool used by
+freelancers and teams to log work hours, generate reports, and manage projects.
+It works across web, desktop, and mobile — and its generous free tier covers
+unlimited users and tracking. This MCP server lets you control Clockify with
+natural language through Claude, so you never have to leave your terminal.
+
+## Prerequisites
+
+- **A Clockify account** — [sign up for free](https://app.clockify.me/signup)
+  (the free plan is all you need)
+- **A personal API key** — once logged in, go to
+  *Profile settings → API → Generate*
+- **Your workspace ID** — visible in the Clockify URL after selecting a
+  workspace (e.g. `app.clockify.me/workspaces/<id>/...`)
+- **Node.js 24+**
+
 ## Install
 
 ```sh
@@ -34,10 +52,9 @@ EOF
 chmod 600 ~/.clockify-mcp/config.json
 ```
 
-- **Get an API key:** in Clockify, open *Profile settings → API → Generate*.
-- **Workspace id:** visible in the Clockify URL once you select a workspace.
-
-The server will refuse to start if the config file is group- or world-readable.
+Paste the API key and workspace ID from the [prerequisites](#prerequisites)
+above. The server will refuse to start if the config file is group- or
+world-readable.
 
 ## Hook into Claude Code
 
@@ -92,6 +109,26 @@ Notes:
 - `delete_project` tries a hard delete; if Clockify refuses because the
   project has time entries, the server archives it instead. The response
   reports `{ "action": "deleted" }` or `{ "action": "archived" }`.
+
+## Example prompts
+
+Once the server is running, try asking Claude things like:
+
+| Prompt | What happens |
+| ------ | ------------ |
+| "Start a timer for the standup meeting" | Starts a running timer with that description |
+| "Stop my timer" | Stops the currently running timer |
+| "How many hours did I log this week?" | Lists recent time entries and totals them |
+| "Log 2 hours yesterday for the Website Redesign project" | Creates a time entry on the right project |
+| "Create a project called 'Brand Refresh' for client Acme" | Creates a new project linked to an existing client |
+| "Show me all time entries from last Monday" | Fetches entries filtered by date |
+| "Tag my last time entry with 'billable'" | Updates the most recent entry with a tag |
+| "Delete the 'test-cleanup' tag" | Removes a tag by name |
+| "What projects do we have?" | Lists all projects in the workspace |
+| "Am I tracking time right now?" | Checks for a running timer |
+
+Claude handles the translation from natural language to API calls — you just
+describe what you want in plain English.
 
 ## Security
 
