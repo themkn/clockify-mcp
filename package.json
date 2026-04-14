@@ -1,6 +1,6 @@
 {
   "name": "@themkn/clockify-mcp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "MCP server for managing Clockify time tracking — start/stop timers, CRUD time entries, projects, tasks, tags, and clients via Claude Code or any MCP client.",
   "keywords": [
     "mcp",
@@ -17,7 +17,7 @@
   "license": "MIT",
   "type": "module",
   "bin": {
-    "clockify-mcp": "./dist/index.js"
+    "clockify-mcp": "dist/index.js"
   },
   "main": "./dist/index.js",
   "files": [
