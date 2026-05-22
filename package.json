@@ -1,7 +1,15 @@
 {
   "name": "@themkn/clockify-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for managing Clockify time tracking — start/stop timers, CRUD time entries, projects, tasks, tags, and clients via Claude Code or any MCP client.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/themkn/clockify-mcp.git"
+  },
+  "homepage": "https://github.com/themkn/clockify-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/themkn/clockify-mcp/issues"
+  },
   "keywords": [
     "mcp",
     "mcp-server",

@@ -37,7 +37,7 @@ export function buildServer(bootstrap: ServerBootstrap): Server {
   const ctx: ToolContext = { client, workspaceId: config.workspaceId, user };
 
   const mcp = new Server(
-    { name: "clockify-mcp", version: "0.1.0" },
+    { name: "clockify-mcp", version: "1.0.1" },
     { capabilities: { tools: {} } },
   );
 
