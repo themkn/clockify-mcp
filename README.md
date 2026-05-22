@@ -71,17 +71,60 @@ or the per-project `.claude/mcp.json`):
 }
 ```
 
-### Auto-approve tools
+### Recommended permissions
 
-By default Claude Code asks for permission on every Clockify tool call. To
-allow all Clockify tools without prompting, add this to your
-`~/.claude/settings.json`:
+By default Claude Code asks for permission on every Clockify tool call. A
+blanket `mcp__clockify__*` allow works, but it also auto-approves destructive
+calls like `delete_time_entry`. A tiered policy keeps the daily flow frictionless
+while making destructive or rare operations explicit.
+
+Add this to your `~/.claude/settings.json`:
 
 ```json
 {
   "permissions": {
     "allow": [
-      "mcp__clockify__*"
+      "mcp__clockify__get_current_user",
+      "mcp__clockify__get_workspace",
+      "mcp__clockify__get_project",
+      "mcp__clockify__get_time_entry",
+      "mcp__clockify__get_running_timer",
+      "mcp__clockify__list_clients",
+      "mcp__clockify__list_projects",
+      "mcp__clockify__list_tasks",
+      "mcp__clockify__list_tags",
+      "mcp__clockify__list_time_entries",
+      "mcp__clockify__start_timer",
+      "mcp__clockify__stop_timer",
+      "mcp__clockify__create_time_entry",
+      "mcp__clockify__update_time_entry"
+    ]
+  }
+}
+```
+
+What this does:
+
+- **Reads + time-entry writes** (the list above) run without prompting — these
+  are the daily flow.
+- **Catalog writes** (`create_project`, `update_client`, etc.) and **all
+  `delete_*` tools** are *not* listed, so Claude Code will prompt before each
+  call. Catalog edits are rare from the MCP and deletes should be deliberate.
+
+If you want a stricter setup, keep a wildcard `allow` and add a `deny` block for
+the destructive tools — `deny` blocks the call entirely (no prompt, no
+override):
+
+```json
+{
+  "permissions": {
+    "allow": ["mcp__clockify__*"],
+    "deny": [
+      "mcp__clockify__delete_client",
+      "mcp__clockify__delete_project",
+      "mcp__clockify__delete_task",
+      "mcp__clockify__delete_tag",
+      "mcp__clockify__delete_time_entry"
     ]
   }
 }
