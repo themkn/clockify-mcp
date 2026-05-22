@@ -19,6 +19,6 @@ export const metaTools: ToolDefinition<unknown>[] = [
     name: "get_workspace",
     description: "Return the workspace id this server operates against.",
     schema: Empty,
-    handler: async (_input, ctx) => ({ workspaceId: ctx.config.workspaceId }),
+    handler: async (_input, ctx) => ({ workspaceId: ctx.workspaceId }),
   },
 ];

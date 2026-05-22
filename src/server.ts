@@ -20,7 +20,7 @@ export interface ToolDefinition<Input> {
 
 export interface ToolContext {
   client: ClockifyClient;
-  config: Config;
+  workspaceId: string;
   user: ClockifyUser;
 }
 
@@ -34,7 +34,7 @@ export interface ServerBootstrap {
 export function buildServer(bootstrap: ServerBootstrap): Server {
   const { config, user, client, tools } = bootstrap;
   const byName = new Map(tools.map((t) => [t.name, t]));
-  const ctx: ToolContext = { client, config, user };
+  const ctx: ToolContext = { client, workspaceId: config.workspaceId, user };
 
   const mcp = new Server(
     { name: "clockify-mcp", version: "0.1.0" },
@@ -71,11 +71,11 @@ export function buildServer(bootstrap: ServerBootstrap): Server {
         content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
       };
     } catch (err) {
-      const text =
+      const raw =
         err instanceof ClockifyError
           ? err.toUserMessage()
           : `Unexpected error: ${(err as Error).message}`;
-      return { isError: true, content: [{ type: "text", text }] };
+      return { isError: true, content: [{ type: "text", text: client.scrub(raw) }] };
     }
   });
 

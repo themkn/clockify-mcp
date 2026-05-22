@@ -37,6 +37,11 @@ export class ClockifyClient {
     return this.request<ClockifyUser>("/user");
   }
 
+  /** Strip the API key from arbitrary text — last-line scrubber for any output path. */
+  scrub(text: string): string {
+    return sanitize(text, this.apiKey);
+  }
+
   async listTimeEntries(
     workspaceId: string,
     userId: string,

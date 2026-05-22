@@ -79,7 +79,7 @@ function c(ctx: ToolContext): AnyClient {
 }
 
 async function findRunning(ctx: ToolContext): Promise<RawTimeEntry | null> {
-  const items = await c(ctx).listTimeEntries(ctx.config.workspaceId, ctx.user.id, {
+  const items = await c(ctx).listTimeEntries(ctx.workspaceId, ctx.user.id, {
     inProgress: true,
   });
   return items[0] ?? null;
@@ -93,7 +93,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     schema: ListInput,
     handler: async (input, ctx) => {
       const i = input as z.infer<typeof ListInput>;
-      const raw = await c(ctx).listTimeEntries(ctx.config.workspaceId, ctx.user.id, {
+      const raw = await c(ctx).listTimeEntries(ctx.workspaceId, ctx.user.id, {
         start: i.start,
         end: i.end,
         project: i.projectId,
@@ -110,7 +110,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     schema: GetInput,
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof GetInput>;
-      const raw = await c(ctx).getTimeEntry(ctx.config.workspaceId, id);
+      const raw = await c(ctx).getTimeEntry(ctx.workspaceId, id);
       return shapeTimeEntry(raw);
     },
   },
@@ -121,7 +121,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     schema: CreateInput,
     handler: async (input, ctx) => {
       const body = input as CreateTimeEntryBody;
-      const raw = await c(ctx).createTimeEntry(ctx.config.workspaceId, body);
+      const raw = await c(ctx).createTimeEntry(ctx.workspaceId, body);
       return shapeTimeEntry(raw);
     },
   },
@@ -131,7 +131,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     schema: UpdateInput,
     handler: async (input, ctx) => {
       const { id, ...rest } = input as z.infer<typeof UpdateInput>;
-      const raw = await c(ctx).updateTimeEntry(ctx.config.workspaceId, id, rest);
+      const raw = await c(ctx).updateTimeEntry(ctx.workspaceId, id, rest);
       return shapeTimeEntry(raw);
     },
   },
@@ -141,7 +141,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     schema: DeleteInput,
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof DeleteInput>;
-      await c(ctx).deleteTimeEntry(ctx.config.workspaceId, id);
+      await c(ctx).deleteTimeEntry(ctx.workspaceId, id);
       return { deleted: true, id };
     },
   },
@@ -156,7 +156,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
       if (running) {
         throw new Error(`A timer is already running (id ${running.id}). Stop it before starting a new one.`);
       }
-      const raw = await c(ctx).createTimeEntry(ctx.config.workspaceId, {
+      const raw = await c(ctx).createTimeEntry(ctx.workspaceId, {
         start: i.start ?? new Date().toISOString(),
         description: i.description,
         projectId: i.projectId,
@@ -174,7 +174,7 @@ export const timeEntryTools: ToolDefinition<unknown>[] = [
     handler: async (input, ctx) => {
       const { end } = input as z.infer<typeof StopInput>;
       const raw = await c(ctx).stopRunningTimer(
-        ctx.config.workspaceId,
+        ctx.workspaceId,
         ctx.user.id,
         end ?? new Date().toISOString(),
       );

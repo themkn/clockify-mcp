@@ -53,7 +53,7 @@ export const taskTools: ToolDefinition<unknown>[] = [
     schema: ListInput,
     handler: async (input, ctx) => {
       const i = input as z.infer<typeof ListInput>;
-      const raw = await c(ctx).listTasks(ctx.config.workspaceId, i.projectId, {
+      const raw = await c(ctx).listTasks(ctx.workspaceId, i.projectId, {
         name: i.name,
         page: i.page,
         pageSize: i.pageSize,
@@ -67,7 +67,7 @@ export const taskTools: ToolDefinition<unknown>[] = [
     schema: CreateInput,
     handler: async (input, ctx) => {
       const { projectId, ...body } = input as z.infer<typeof CreateInput>;
-      return shapeTask(await c(ctx).createTask(ctx.config.workspaceId, projectId, body));
+      return shapeTask(await c(ctx).createTask(ctx.workspaceId, projectId, body));
     },
   },
   {
@@ -76,7 +76,7 @@ export const taskTools: ToolDefinition<unknown>[] = [
     schema: UpdateInput,
     handler: async (input, ctx) => {
       const { projectId, id, ...body } = input as z.infer<typeof UpdateInput>;
-      return shapeTask(await c(ctx).updateTask(ctx.config.workspaceId, projectId, id, body));
+      return shapeTask(await c(ctx).updateTask(ctx.workspaceId, projectId, id, body));
     },
   },
   {
@@ -85,7 +85,7 @@ export const taskTools: ToolDefinition<unknown>[] = [
     schema: DeleteInput,
     handler: async (input, ctx) => {
       const { projectId, id } = input as z.infer<typeof DeleteInput>;
-      await c(ctx).deleteTask(ctx.config.workspaceId, projectId, id);
+      await c(ctx).deleteTask(ctx.workspaceId, projectId, id);
       return { deleted: true, id };
     },
   },

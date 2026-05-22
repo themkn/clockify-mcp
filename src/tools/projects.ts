@@ -59,7 +59,7 @@ export const projectTools: ToolDefinition<unknown>[] = [
     schema: ListInput,
     handler: async (input, ctx) => {
       const i = input as z.infer<typeof ListInput>;
-      const raw = await c(ctx).listProjects(ctx.config.workspaceId, {
+      const raw = await c(ctx).listProjects(ctx.workspaceId, {
         name: i.name,
         clientIds: i.clientId ? [i.clientId] : undefined,
         archived: i.archived,
@@ -75,7 +75,7 @@ export const projectTools: ToolDefinition<unknown>[] = [
     schema: GetInput,
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof GetInput>;
-      return shapeProject(await c(ctx).getProject(ctx.config.workspaceId, id));
+      return shapeProject(await c(ctx).getProject(ctx.workspaceId, id));
     },
   },
   {
@@ -84,7 +84,7 @@ export const projectTools: ToolDefinition<unknown>[] = [
     schema: CreateInput,
     handler: async (input, ctx) => {
       const body = input as CreateProjectBody;
-      return shapeProject(await c(ctx).createProject(ctx.config.workspaceId, body));
+      return shapeProject(await c(ctx).createProject(ctx.workspaceId, body));
     },
   },
   {
@@ -93,7 +93,7 @@ export const projectTools: ToolDefinition<unknown>[] = [
     schema: UpdateInput,
     handler: async (input, ctx) => {
       const { id, ...rest } = input as z.infer<typeof UpdateInput>;
-      return shapeProject(await c(ctx).updateProject(ctx.config.workspaceId, id, rest));
+      return shapeProject(await c(ctx).updateProject(ctx.workspaceId, id, rest));
     },
   },
   {
@@ -104,11 +104,11 @@ export const projectTools: ToolDefinition<unknown>[] = [
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof DeleteInput>;
       try {
-        await c(ctx).deleteProject(ctx.config.workspaceId, id);
+        await c(ctx).deleteProject(ctx.workspaceId, id);
         return { action: "deleted", id };
       } catch (err) {
         if (err instanceof ClockifyError && (err.status === 400 || err.status === 403 || err.status === 409)) {
-          await c(ctx).archiveProject(ctx.config.workspaceId, id);
+          await c(ctx).archiveProject(ctx.workspaceId, id);
           return { action: "archived", id };
         }
         throw err;

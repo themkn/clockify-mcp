@@ -34,7 +34,7 @@ export const tagTools: ToolDefinition<unknown>[] = [
     schema: ListInput,
     handler: async (input, ctx) => {
       const i = input as z.infer<typeof ListInput>;
-      const raw = await c(ctx).listTags(ctx.config.workspaceId, i);
+      const raw = await c(ctx).listTags(ctx.workspaceId, i);
       return raw.map(shapeTag);
     },
   },
@@ -43,7 +43,7 @@ export const tagTools: ToolDefinition<unknown>[] = [
     description: "Create a tag.",
     schema: CreateInput,
     handler: async (input, ctx) =>
-      shapeTag(await c(ctx).createTag(ctx.config.workspaceId, input as CreateTagBody)),
+      shapeTag(await c(ctx).createTag(ctx.workspaceId, input as CreateTagBody)),
   },
   {
     name: "update_tag",
@@ -51,7 +51,7 @@ export const tagTools: ToolDefinition<unknown>[] = [
     schema: UpdateInput,
     handler: async (input, ctx) => {
       const { id, ...rest } = input as z.infer<typeof UpdateInput>;
-      return shapeTag(await c(ctx).updateTag(ctx.config.workspaceId, id, rest));
+      return shapeTag(await c(ctx).updateTag(ctx.workspaceId, id, rest));
     },
   },
   {
@@ -60,7 +60,7 @@ export const tagTools: ToolDefinition<unknown>[] = [
     schema: DeleteInput,
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof DeleteInput>;
-      await c(ctx).deleteTag(ctx.config.workspaceId, id);
+      await c(ctx).deleteTag(ctx.workspaceId, id);
       return { deleted: true, id };
     },
   },

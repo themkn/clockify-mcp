@@ -40,7 +40,7 @@ export const clientTools: ToolDefinition<unknown>[] = [
     description: "List Clockify clients in the workspace.",
     schema: ListInput,
     handler: async (input, ctx) => {
-      const raw = await c(ctx).listClients(ctx.config.workspaceId, input as never);
+      const raw = await c(ctx).listClients(ctx.workspaceId, input as never);
       return raw.map(shapeClient);
     },
   },
@@ -49,7 +49,7 @@ export const clientTools: ToolDefinition<unknown>[] = [
     description: "Create a Clockify client.",
     schema: CreateInput,
     handler: async (input, ctx) =>
-      shapeClient(await c(ctx).createClient(ctx.config.workspaceId, input as CreateClientBody)),
+      shapeClient(await c(ctx).createClient(ctx.workspaceId, input as CreateClientBody)),
   },
   {
     name: "update_client",
@@ -57,7 +57,7 @@ export const clientTools: ToolDefinition<unknown>[] = [
     schema: UpdateInput,
     handler: async (input, ctx) => {
       const { id, ...rest } = input as z.infer<typeof UpdateInput>;
-      return shapeClient(await c(ctx).updateClient(ctx.config.workspaceId, id, rest));
+      return shapeClient(await c(ctx).updateClient(ctx.workspaceId, id, rest));
     },
   },
   {
@@ -66,7 +66,7 @@ export const clientTools: ToolDefinition<unknown>[] = [
     schema: DeleteInput,
     handler: async (input, ctx) => {
       const { id } = input as z.infer<typeof DeleteInput>;
-      await c(ctx).deleteClient(ctx.config.workspaceId, id);
+      await c(ctx).deleteClient(ctx.workspaceId, id);
       return { deleted: true, id };
     },
   },
