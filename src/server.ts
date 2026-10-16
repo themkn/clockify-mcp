@@ -10,6 +10,7 @@ import { ClockifyClient } from "./clockify/client.js";
 import { ClockifyError } from "./clockify/errors.js";
 import type { Config } from "./config.js";
 import type { ClockifyUser } from "./clockify/types.js";
+import { PACKAGE_VERSION } from "./version.js";
 
 export interface ToolDefinition<Input> {
   name: string;
@@ -37,7 +38,7 @@ export function buildServer(bootstrap: ServerBootstrap): Server {
   const ctx: ToolContext = { client, workspaceId: config.workspaceId, user };
 
   const mcp = new Server(
-    { name: "clockify-mcp", version: "1.0.1" },
+    { name: "clockify-mcp", version: PACKAGE_VERSION },
     { capabilities: { tools: {} } },
   );
 
